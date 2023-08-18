@@ -1,6 +1,8 @@
-import 'package:cinemapedia/application/providers/movies/movies_providers.dart';
+import 'package:cinemapedia/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../application/providers/providers.dart';
 
 class HomeScreen extends StatelessWidget {
   static const String name = 'home_sreen';
@@ -8,11 +10,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Screen'),
-      ),
-      body: const _HomeView(),
+    return const Scaffold(
+      body: _HomeView(),
+      bottomNavigationBar: CustomBottonNavigationBar(),
     );
   }
 }
@@ -33,17 +33,26 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final nowPlayingMoivies = ref.watch(nowPlayingMoviesProvider);
+    //final nowPlayingMoivies = ref.watch(nowPlayingMoviesProvider);
+    final nowPlayingMoivies = ref.watch(moviesSlideShowProvider);
 
-    return ListView.builder(
-      itemCount: nowPlayingMoivies.length,
-      itemBuilder: (BuildContext context, int index) {
-        final movie = nowPlayingMoivies[index];
-        return ListTile(
-          title: Text(movie.title),
-          leading: Image.network(movie.posterPath),
-        );
-      },
+    return Column(
+      children: [
+        const CustomAppBar(),
+        MoviesSlideShow(movies: nowPlayingMoivies),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 0),
+            itemCount: nowPlayingMoivies.length,
+            itemBuilder: (BuildContext context, int index) {
+              final movie = nowPlayingMoivies[index];
+              return ListTile(
+                title: Text(movie.title),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
